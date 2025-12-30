@@ -241,43 +241,53 @@ class _HomePageState extends State<HomePage> {
                   ),
                   // User Status
                   widget.isGuest
-                      ? const Text(
-                    'Login to earn points',
-                    style: TextStyle(
-                      color: Color(0xFFC67C4E),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  )
-                      : Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Text(
-                            'BeeBoo',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF2F2D2C),
-                            ),
-                          ),
-                          Text(
-                            'Points: 120',
+                      ? InkWell(
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WelcomePage(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Login to earn points',
                             style: TextStyle(
                               color: Color(0xFFC67C4E),
-                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(width: 8),
-                      const CircleAvatar(
-                        backgroundColor: Colors.grey,
-                        backgroundImage: NetworkImage(
-                            'https://i.pravatar.cc/150?img=12'),
-                      ),
-                    ],
-                  ),
+                        )
+                      : Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: const [
+                                Text(
+                                  'BeeBoo',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF2F2D2C),
+                                  ),
+                                ),
+                                Text(
+                                  'Points: 120',
+                                  style: TextStyle(
+                                    color: Color(0xFFC67C4E),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(width: 8),
+                            const CircleAvatar(
+                              backgroundColor: Colors.grey,
+                              backgroundImage: NetworkImage(
+                                  'https://i.pravatar.cc/150?img=12'),
+                            ),
+                          ],
+                        ),
                 ],
               ),
             ),
@@ -295,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField( // เปลี่ยนจาก Text เป็น TextField
+                      child: TextField(
                         onChanged: (value) {
                           searchQuery = value;
                           _filterCoffee();
@@ -334,10 +344,8 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
-                  return _buildCategoryChip(
-                      categories[index],
-                      selectedCategory == categories[index]
-                  );
+                  return _buildCategoryChip(categories[index],
+                      selectedCategory == categories[index]);
                 },
               ),
             ),
@@ -349,100 +357,114 @@ class _HomePageState extends State<HomePage> {
               child: displayedMenu.isEmpty
                   ? const Center(child: Text("No coffee found :("))
                   : GridView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.7,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: displayedMenu.length,
-                itemBuilder: (context, index) {
-                  final item = displayedMenu[index];
-                  return Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Image
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              item['image'],
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Container(
-                                color: Colors.grey[300],
-                                child: const Icon(Icons.coffee,
-                                    size: 50, color: Colors.brown),
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.7,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: displayedMenu.length,
+                      itemBuilder: (context, index) {
+                        final item = displayedMenu[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailPage(item: item),
                               ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Title
-                        Text(
-                          item['name'],
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2F2D2C),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        // Subtitle
-                        Text(
-                          item['description'],
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Price and Add Button
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '\$${item['price'].toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF2F2D2C),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: _addToCart,
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFC67C4E),
-                                  borderRadius: BorderRadius.circular(12),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 5),
                                 ),
-                                child: const Icon(Icons.add,
-                                    color: Colors.white, size: 20),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ],
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Image
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      item['image'],
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                        color: Colors.grey[300],
+                                        child: const Icon(Icons.coffee,
+                                            size: 50, color: Colors.brown),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                // Title
+                                Text(
+                                  item['name'],
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF2F2D2C),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                // Subtitle
+                                Text(
+                                  item['description'],
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                // Price and Add Button
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '\$${item['price'].toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2F2D2C),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: _addToCart,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFC67C4E),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: const Icon(Icons.add,
+                                            color: Colors.white, size: 20),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
@@ -488,6 +510,228 @@ class _HomePageState extends State<HomePage> {
               color: isSelected ? Colors.white : Colors.black,
               fontWeight: FontWeight.bold,
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// 4. Detail Page
+class DetailPage extends StatefulWidget {
+  final Map<String, dynamic> item;
+
+  const DetailPage({super.key, required this.item});
+
+  @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  String selectedSize = 'M';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F9),
+      appBar: AppBar(
+        title: Text(widget.item['name'],
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite_border, color: Colors.black),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Image Area
+            Center(
+              child: Container(
+                margin: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 20,
+                      spreadRadius: 5,
+                    )
+                  ],
+                ),
+                child: ClipOval(
+                  child: Image.network(
+                    widget.item['image'],
+                    width: 280,
+                    height: 280,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: 280,
+                      height: 280,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.coffee,
+                          size: 80, color: Colors.brown),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Details Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title & Description
+                  Text(
+                    widget.item['name'],
+                    style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2F2D2C)),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    widget.item['description'],
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Rating
+                  Row(
+                    children: const [
+                      Icon(Icons.star, color: Colors.amber, size: 24),
+                      SizedBox(width: 8),
+                      Text("4.5",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      SizedBox(width: 4),
+                      Text("(2,330)", style: TextStyle(color: Colors.grey)),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+                  const Divider(color: Color(0xFFEAEAEA)),
+                  const SizedBox(height: 24),
+
+                  // Description Body
+                  const Text("Description",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  const Text(
+                    "A cappuccino is an approximately 150 ml (5 oz) beverage, with 25 ml of espresso coffee and 85ml of fresh milk the fo.. Read More",
+                    style: TextStyle(color: Colors.grey, height: 1.5),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Size Selection
+                  const Text("Size",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildSizeChip("S"),
+                      _buildSizeChip("M"),
+                      _buildSizeChip("L"),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              offset: Offset(0, -5),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("Price", style: TextStyle(color: Colors.grey)),
+                const SizedBox(height: 4),
+                Text(
+                  '\$${widget.item['price'].toStringAsFixed(2)}',
+                  style: const TextStyle(
+                      color: Color(0xFFC67C4E),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFC67C4E),
+                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+              ),
+              child: const Text("Buy Now",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSizeChip(String size) {
+    bool isSelected = selectedSize == size;
+    return GestureDetector(
+      onTap: () => setState(() => selectedSize = size),
+      child: Container(
+        width: 90,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFFFF5EE) : Colors.white,
+          border: Border.all(
+              color: isSelected
+                  ? const Color(0xFFC67C4E)
+                  : Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          size,
+          style: TextStyle(
+            color: isSelected ? const Color(0xFFC67C4E) : Colors.black,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ),

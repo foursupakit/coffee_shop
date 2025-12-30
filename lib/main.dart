@@ -140,35 +140,35 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // Mock Data
   final List<Map<String, dynamic>> coffeeMenu = [
-    {
-      'name': 'Cappuccino',
-      'description': 'with Chocolate',
-      'price': 4.53,
-      'rating': 4.8,
-      'image': 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&q=80',
-    },
-    {
-      'name': 'Espresso',
-      'description': 'with Oat Milk',
-      'price': 3.90,
-      'rating': 4.9,
-      'image': 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&q=80',
-    },
-    {
-      'name': 'Latte',
-      'description': 'with Almond Milk',
-      'price': 4.20,
-      'rating': 4.5,
-      'image': 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&q=80',
-    },
-    {
-      'name': 'Mocha',
-      'description': 'Double Shot',
-      'price': 5.00,
-      'rating': 4.7,
-      'image': 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&q=80',
-    },
+    {'name': 'Cappuccino', 'description': 'with Chocolate', 'price': 4.53, 'image': 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&q=80', 'category': 'Cappuccino'},
+    {'name': 'Espresso', 'description': 'with Oat Milk', 'price': 3.90, 'image': 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&q=80', 'category': 'Espresso'},
+    {'name': 'Latte', 'description': 'with Almond Milk', 'price': 4.20, 'image': 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&q=80', 'category': 'Latte'},
+    {'name': 'Mocha', 'description': 'Double Shot', 'price': 5.00, 'image': 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&q=80', 'category': 'Mocha'},
   ];
+
+  // 2. ตัวแปรสำหรับเก็บสถานะการ Search และ Filter
+  List<Map<String, dynamic>> displayedMenu = [];
+  String searchQuery = "";
+  String selectedCategory = "All"; // เริ่มต้นที่ All
+
+  final List<String> categories = ['All', 'Cappuccino', 'Espresso', 'Latte', 'Mocha'];
+
+  @override
+  void initState() {
+    super.initState();
+    displayedMenu = coffeeMenu; // เริ่มต้นให้แสดงทั้งหมด
+  }
+
+  // 3. ฟังก์ชันหลักในการกรองข้อมูล
+  void _filterCoffee() {
+    setState(() {
+      displayedMenu = coffeeMenu.where((coffee) {
+        final matchesSearch = coffee['name'].toLowerCase().contains(searchQuery.toLowerCase());
+        final matchesCategory = selectedCategory == "All" || coffee['category'] == selectedCategory;
+        return matchesSearch && matchesCategory;
+      }).toList();
+    });
+  }
 
   void _addToCart() {
     if (widget.isGuest) {
@@ -242,42 +242,42 @@ class _HomePageState extends State<HomePage> {
                   // User Status
                   widget.isGuest
                       ? const Text(
-                          'Login to earn points',
-                          style: TextStyle(
-                            color: Color(0xFFC67C4E),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        )
+                    'Login to earn points',
+                    style: TextStyle(
+                      color: Color(0xFFC67C4E),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  )
                       : Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: const [
-                                Text(
-                                  'BeeBoo',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF2F2D2C),
-                                  ),
-                                ),
-                                Text(
-                                  'Points: 120',
-                                  style: TextStyle(
-                                    color: Color(0xFFC67C4E),
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: const [
+                          Text(
+                            'BeeBoo',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2F2D2C),
                             ),
-                            const SizedBox(width: 8),
-                            const CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              backgroundImage: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=12'),
+                          ),
+                          Text(
+                            'Points: 120',
+                            style: TextStyle(
+                              color: Color(0xFFC67C4E),
+                              fontSize: 12,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 8),
+                      const CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage(
+                            'https://i.pravatar.cc/150?img=12'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -295,15 +295,18 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.search, color: Colors.white),
-                          SizedBox(width: 12),
-                          Text(
-                            'Search coffee',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
+                      child: TextField( // เปลี่ยนจาก Text เป็น TextField
+                        onChanged: (value) {
+                          searchQuery = value;
+                          _filterCoffee();
+                        },
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Search coffee',
+                          hintStyle: TextStyle(color: Colors.grey),
+                          icon: Icon(Icons.search, color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
@@ -323,26 +326,29 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 24),
 
-            // Categories (Visual Only)
+            // Categories (Filter)
             SizedBox(
               height: 40,
-              child: ListView(
+              child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                children: [
-                  _buildCategoryChip('Cappuccino', true),
-                  _buildCategoryChip('Macchiato', false),
-                  _buildCategoryChip('Latte', false),
-                  _buildCategoryChip('Americano', false),
-                ],
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  return _buildCategoryChip(
+                      categories[index],
+                      selectedCategory == categories[index]
+                  );
+                },
               ),
             ),
 
             const SizedBox(height: 24),
 
-            // Grid View
+            // Grid View (ใช้ displayedMenu แทน coffeeMenu)
             Expanded(
-              child: GridView.builder(
+              child: displayedMenu.isEmpty
+                  ? const Center(child: Text("No coffee found :("))
+                  : GridView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -350,9 +356,9 @@ class _HomePageState extends State<HomePage> {
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
-                itemCount: coffeeMenu.length,
+                itemCount: displayedMenu.length,
                 itemBuilder: (context, index) {
-                  final item = coffeeMenu[index];
+                  final item = displayedMenu[index];
                   return Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -460,23 +466,28 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Widget แยกเพื่อความสะอาดของโค้ด
   Widget _buildCategoryChip(String label, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFC67C4E) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: isSelected
-            ? null
-            : Border.all(color: Colors.grey.shade300),
-      ),
-      child: Center(
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
-            fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () {
+        selectedCategory = label;
+        _filterCoffee();
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFC67C4E) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: isSelected ? null : Border.all(color: Colors.grey.shade300),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

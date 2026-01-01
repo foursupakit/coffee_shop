@@ -403,32 +403,59 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         )
-                      : Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: const [
-                                Text(
-                                  'BeeBoo',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF2F2D2C),
-                                  ),
+                      : PopupMenuButton<String>(
+                          offset: const Offset(0, 48),
+                          onSelected: (value) {
+                            if (value == 'logout') {
+                              // Perform Logout
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const WelcomePage(),
                                 ),
-                                Text(
-                                  'Points: 120',
-                                  style: TextStyle(
-                                    color: Color(0xFFC67C4E),
-                                    fontSize: 12,
+                                (route) => false,
+                              );
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: const [
+                                  Text(
+                                    'BeeBoo',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF2F2D2C),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(width: 8),
-                            const CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              backgroundImage: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=12'),
+                                  Text(
+                                    'Points: 120',
+                                    style: TextStyle(
+                                      color: Color(0xFFC67C4E),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 8),
+                              const CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                backgroundImage: NetworkImage(
+                                    'https://i.pravatar.cc/150?img=12'),
+                              ),
+                            ],
+                          ),
+                          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                            const PopupMenuItem<String>(
+                              value: 'logout',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.logout, color: Colors.grey),
+                                  SizedBox(width: 8),
+                                  Text('Logout'),
+                                ],
+                              ),
                             ),
                           ],
                         ),
